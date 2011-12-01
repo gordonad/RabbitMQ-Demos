@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:amqp="http://www.springframework.org/schema/integration/amqp"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+          http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+          http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <int:message-history/>
+
+    <rabbit:connection-factory id="rabbitConnectionFactory"
+                               username="${rabbit.username}" password="${rabbit.password}" host="${rabbit.host:5672}"
+                               port="${rabbit.port}" channel-cache-size="${rabbit.channel.cache.size:1}"
+                               virtual-host="${rabbit.virtual.host:/}"/>
+
+    <!-- *****************************************************
+   Set up JMX Management
+   @See org.springframework.amqp.rabbit.core.RabbitAdmin
+   ***************************************************** -->
+    <rabbit:admin id="rabbitAdmin" connection-factory="rabbitConnectionFactory"
+                  auto-startup="true"/>
+
+    <rabbit:queue id="rabbitRequestQueue" name="${rabbitdemo.stepRequestQueue}"/>
+    <rabbit:queue id="rabbitResponseQueue" name="${rabbitdemo.stepResponseQueue}"/>
+    <rabbit:queue id="rabbitErrorQueue" name="${rabbitdemo.stepErrorQueue}"/>
+
+    <rabbit:direct-exchange name="${rabbitdemo.message.exchange}">
+        <rabbit:bindings>
+            <rabbit:binding queue="${rabbitdemo.stepRequestQueue}"
+                            key="${rabbitdemo.message.routing.key}"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <rabbit:template id="rabbitTemplate"
+                     queue="${rabbitdemo.stepRequestQueue}" connection-factory="rabbitConnectionFactory"
+                     routing-key="${rabbitdemo.message.routing.key}" reply-timeout="1000"/>
+
+    <!-- *** STEP 1 *** Gateway receives msg from code -->
+
+    <!-- *** STEP 2 *** Gateway puts message on "requestChannel" -->
+    <int:channel id="requestChannel">
+        <int:interceptors>
+            <int:wire-tap channel="msgLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <!-- *** Response *** Returned expected on "responseChannel" -->
+    <int:channel id="responseChannel">
+        <int:queue/>
+        <int:interceptors>
+            <int:wire-tap channel="msgLogger"/>
+        </int:interceptors>
+    </int:channel>
+    <int:logging-channel-adapter id="msgLogger"
+                                 level="DEBUG" log-full-message="true"/>
+
+    <!-- *** Error Response *** Returned expected on "errorChannel" -->
+    <int:channel id="errorChannel">
+        <int:interceptors>
+            <int:wire-tap channel="errorLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <!-- *** STEP 3 *** AMQP Gateway sends message from "requestChannel" -->
+    <!-- Rabbit Gateways (instead of channel adapters) for Remote Messaging
+ - gDickens 11-Aug-11 -->
+    <amqp:outbound-gateway request-channel="requestChannel"
+                           reply-channel="responseChannel" amqp-template="rabbitTemplate"
+                           exchange-name="${rabbitdemo.message.exchange}"
+                           routing-key="${rabbitdemo.message.routing.key}"/>
+
+    <!-- *** Error Response *** AMQP Gateway processes messages from the "Error
+   Channel" -->
+    <amqp:inbound-gateway request-channel="errorLogger"
+                          connection-factory="rabbitConnectionFactory" queue-names="${rabbitdemo.stepErrorQueue}"/>
+    <int:logging-channel-adapter id="errorLogger"
+                                 level="DEBUG" log-full-message="true"/>
+
+    <!-- *** Step 4 *** AMQP Gateway receives messages from Rabbit -->
+    <!-- Sends message to StepExecutionRequestHandler with Payload: Message<StepExecutionRequest> -->
+    <!-- Returns message to Rabbit with Payload: Message<StepExecution> -->
+
+    <int:channel id="stepRequestChannel">
+        <int:interceptors>
+            <int:wire-tap channel="msgLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <!-- *** Response *** Returned expected on "responseChannel" -->
+    <int:channel id="stepResponseChannel">
+        <int:queue/>
+        <int:interceptors>
+            <int:wire-tap channel="msgLogger"/>
+        </int:interceptors>
+    </int:channel>
+
+    <amqp:inbound-gateway id="stepMessageGateway"
+                          request-channel="stepRequestChannel" reply-channel="stepResponseChannel"
+                          connection-factory="rabbitConnectionFactory" queue-names="${rabbitdemo.stepRequestQueue}"/>
+
+    <int:service-activator id="remoteStepHandler"
+                           ref="stepExecutionRequestHandler" input-channel="stepRequestChannel"
+                           output-channel="stepResponseChannel">
+        <int:poller>
+            <int:interval-trigger interval="10"/>
+        </int:poller>
+    </int:service-activator>
+
+</beans>
+
