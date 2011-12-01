@@ -4,7 +4,7 @@
 package com.chariotsolutions.rabbitmq.web;
 
 import com.chariotsolutions.rabbitmq.domain.Mezzage;
-import com.chariotsolutions.rabbitmq.service.MessageService;
+import com.chariotsolutions.rabbitmq.service.MezzageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.convert.converter.Converter;
@@ -15,7 +15,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
     
     @Autowired
-    MessageService ApplicationConversionServiceFactoryBean.messageService;
+    MezzageService ApplicationConversionServiceFactoryBean.mezzageService;
     
     public Converter<Mezzage, java.lang.String> ApplicationConversionServiceFactoryBean.getMezzageToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.chariotsolutions.rabbitmq.domain.Mezzage, java.lang.String>() {
@@ -28,7 +28,7 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     public Converter<java.lang.Long, Mezzage> ApplicationConversionServiceFactoryBean.getIdToMezzageConverter() {
         return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.chariotsolutions.rabbitmq.domain.Mezzage>() {
             public com.chariotsolutions.rabbitmq.domain.Mezzage convert(java.lang.Long id) {
-                return messageService.findMezzage(id);
+                return mezzageService.findMezzage(id);
             }
         };
     }

@@ -1,15 +1,10 @@
-// Spring Roo 1.2.0.RC1 [rev dcaa483] log opened at 2011-12-01 12:11:06
-download status
-download accept terms of use
+development mode
 project --topLevelPackage com.chariotsolutions.rabbitmq --java 6 --projectName rabbitdemo
-hint
-jpa setup --provider HIBERNATE --database HYPERSONIC_IN_MEMORY 
-hint
+jpa setup --provider HIBERNATE --database HYPERSONIC_IN_MEMORY
 entity jpa --class com.chariotsolutions.rabbitmq.domain.Mezzage --activeRecord false
 field string --fieldName messageBody
 repository jpa --interface ~.repository.MezzageRepository --entity ~.domain.Mezzage
 service --interface ~.service.MezzageService --entity ~.domain.Mezzage
 web mvc setup
 web mvc all --package ~.web
-logging setup --level DEBUG 
-development mode 
+logging setup --level DEBUG

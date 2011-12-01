@@ -4,7 +4,7 @@
 package com.chariotsolutions.rabbitmq.web;
 
 import com.chariotsolutions.rabbitmq.domain.Mezzage;
-import com.chariotsolutions.rabbitmq.service.MessageService;
+import com.chariotsolutions.rabbitmq.service.MezzageService;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import org.springframework.web.util.WebUtils;
 privileged aspect MezzageController_Roo_Controller {
     
     @Autowired
-    MessageService MezzageController.messageService;
+    MezzageService MezzageController.mezzageService;
     
     @RequestMapping(method = RequestMethod.POST)
     public java.lang.String MezzageController.create(@Valid Mezzage mezzage, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
@@ -32,7 +32,7 @@ privileged aspect MezzageController_Roo_Controller {
             return "mezzages/create";
         }
         uiModel.asMap().clear();
-        messageService.saveMezzage(mezzage);
+        mezzageService.saveMezzage(mezzage);
         return "redirect:/mezzages/" + encodeUrlPathSegment(mezzage.getId().toString(), httpServletRequest);
     }
     
@@ -44,7 +44,7 @@ privileged aspect MezzageController_Roo_Controller {
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public java.lang.String MezzageController.show(@PathVariable("id") java.lang.Long id, Model uiModel) {
-        uiModel.addAttribute("mezzage", messageService.findMezzage(id));
+        uiModel.addAttribute("mezzage", mezzageService.findMezzage(id));
         uiModel.addAttribute("itemId", id);
         return "mezzages/show";
     }
@@ -54,11 +54,11 @@ privileged aspect MezzageController_Roo_Controller {
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
-            uiModel.addAttribute("mezzages", messageService.findMezzageEntries(firstResult, sizeNo));
-            float nrOfPages = (float) messageService.countAllMezzages() / sizeNo;
+            uiModel.addAttribute("mezzages", mezzageService.findMezzageEntries(firstResult, sizeNo));
+            float nrOfPages = (float) mezzageService.countAllMezzages() / sizeNo;
             uiModel.addAttribute("maxPages", (int) ((nrOfPages > (int) nrOfPages || nrOfPages == 0.0) ? nrOfPages + 1 : nrOfPages));
         } else {
-            uiModel.addAttribute("mezzages", messageService.findAllMezzages());
+            uiModel.addAttribute("mezzages", mezzageService.findAllMezzages());
         }
         return "mezzages/list";
     }
@@ -70,20 +70,20 @@ privileged aspect MezzageController_Roo_Controller {
             return "mezzages/update";
         }
         uiModel.asMap().clear();
-        messageService.updateMezzage(mezzage);
+        mezzageService.updateMezzage(mezzage);
         return "redirect:/mezzages/" + encodeUrlPathSegment(mezzage.getId().toString(), httpServletRequest);
     }
     
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
     public java.lang.String MezzageController.updateForm(@PathVariable("id") java.lang.Long id, Model uiModel) {
-        uiModel.addAttribute("mezzage", messageService.findMezzage(id));
+        uiModel.addAttribute("mezzage", mezzageService.findMezzage(id));
         return "mezzages/update";
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public java.lang.String MezzageController.delete(@PathVariable("id") java.lang.Long id, @RequestParam(value = "page", required = false) java.lang.Integer page, @RequestParam(value = "size", required = false) java.lang.Integer size, Model uiModel) {
-        Mezzage mezzage = messageService.findMezzage(id);
-        messageService.deleteMezzage(mezzage);
+        Mezzage mezzage = mezzageService.findMezzage(id);
+        mezzageService.deleteMezzage(mezzage);
         uiModel.asMap().clear();
         uiModel.addAttribute("page", (page == null) ? "1" : page.toString());
         uiModel.addAttribute("size", (size == null) ? "10" : size.toString());
@@ -92,7 +92,7 @@ privileged aspect MezzageController_Roo_Controller {
     
     @ModelAttribute("mezzages")
     public Collection<Mezzage> MezzageController.populateMezzages() {
-        return messageService.findAllMezzages();
+        return mezzageService.findAllMezzages();
     }
     
     java.lang.String MezzageController.encodeUrlPathSegment(java.lang.String pathSegment, HttpServletRequest httpServletRequest) {
