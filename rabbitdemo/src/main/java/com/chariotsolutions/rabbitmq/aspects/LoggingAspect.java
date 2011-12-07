@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-    //@Around(value = "execution(void org.springframework.amqp.rabbit.core.RabbitAdmin.deleteExchange(..))")
-    @Around(value = "execution(* com.chariotsolutions.rabbitmq.service.MezzageService+.*(..))") //good
+//    @Around(value = "execution(* com.chariotsolutions.rabbitmq.service.MezzageService+.*(..))") //good
+    @Around(value = "execution(* com.chariotsolutions.rabbitmq..*.*(..))") //good
     public Object cache(ProceedingJoinPoint point) throws Throwable {
         Object value = null;
         String methodName = point.getSignature().getName();

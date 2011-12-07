@@ -9,11 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-          <root url="file://$MODULE_DIR$/src/main/resources" />
-          <root url="file://$MODULE_DIR$/target/generated-sources/annotations" />
-        </sourceRoots>
       </configuration>
     </facet>
     <facet type="jpa" name="JPA">
@@ -56,7 +51,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.springframework.integration:spring-integration-core:2.1.0.M3" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.integration:spring-integration-core:2.1.0.RC1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.0.6.RELEASE" level="project" />
@@ -64,7 +59,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:3.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.integration:spring-integration-amqp:2.1.0.M3" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.integration:spring-integration-amqp:2.1.0.RC1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.amqp:spring-rabbit:1.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:2.5.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />

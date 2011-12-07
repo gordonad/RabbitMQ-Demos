@@ -33,4 +33,12 @@
         <property name="persistenceUnitName" value="persistenceUnit"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <!-- Use AOP to add Logging to Spring AMQP classes -->
+    <bean id="loggingAspect" class="com.chariotsolutions.rabbitmq.aspects.LoggingAspect"/>
+    <aop:aspectj-autoproxy>
+        <aop:include name="loggingAspect"/>
+    </aop:aspectj-autoproxy>
+
+
 </beans>

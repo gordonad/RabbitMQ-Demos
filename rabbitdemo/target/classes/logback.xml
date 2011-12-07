@@ -13,10 +13,10 @@
 
 	<logger name="com.chariotsolutions" level="debug" />
 	<logger name="org.springframework" level="warn" />
-    <logger name="org.springframework.amqp" level="debug"/>
+    <logger name="org.springframework.amqp" level="info"/>
 
     <!--<logger name="org.springframework.batch" level="debug"/>-->
-    <!--<logger name="org.springframework.integration" level="debug"/>-->
+    <logger name="org.springframework.integration" level="debug"/>
     <!--<logger name="com.springsource.batch" level="debug"/>-->
 
 	<!--<logger name="org.springframework.beans" level="debug" />-->

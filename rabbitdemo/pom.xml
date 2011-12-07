@@ -5,7 +5,7 @@
     <groupId>com.chariotsolutions.rabbitmq</groupId>
     <artifactId>rabbitdemo</artifactId>
     <packaging>war</packaging>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
     <name>rabbitdemo</name>
 
     <properties>
@@ -57,7 +57,7 @@
         <maven.compiler.plugin>2.3.2</maven.compiler.plugin>
         <maven.dependency.plugin>2.3</maven.dependency.plugin>
         <maven.deploy.plugin>2.7</maven.deploy.plugin>
-        <maven.eclipse.plugin>2.7</maven.eclipse.plugin>
+        <maven.eclipse.plugin>2.8</maven.eclipse.plugin>
         <maven.enforcer.plugin>1.0.1</maven.enforcer.plugin>
         <maven.exec.plugin>1.2.1</maven.exec.plugin>
         <maven.groovy.plugin>1.3</maven.groovy.plugin>
@@ -89,7 +89,7 @@
         <spring.batch.admin.version>1.2.1.RELEASE</spring.batch.admin.version>
         <spring.batch.integration.version>2.1.0.M4</spring.batch.integration.version>
         <spring.data.jpa.version>1.0.1.RELEASE</spring.data.jpa.version>
-        <spring.integration.version>2.1.0.M3</spring.integration.version>
+        <spring.integration.version>2.1.0.RC1</spring.integration.version>
         <spring.retry.version>1.0.0.RELEASE</spring.retry.version>
         <spring.version>3.0.6.RELEASE</spring.version>
         <spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
@@ -412,6 +412,7 @@
                             <directory>${project.basedir}</directory>
                             <includes>
                                 <include>surefire*</include>
+                                <include>*.dump</include>
                                 <include>*.log</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
@@ -580,6 +581,7 @@
                 <version>${maven.surefire.plugin}</version>
                 <configuration>
                     <!-- Show the test errors on console -->
+                    <skipTests>true</skipTests>
                     <useFile>false</useFile>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>

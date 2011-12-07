@@ -19,12 +19,6 @@
                                virtual-host="${rabbit.virtual.host:/}"/>
 
 
-    <!-- Use AOP to add Logging to Spring AMQP classes -->
-    <bean id="loggingAspect" class="com.chariotsolutions.rabbitmq.aspects.LoggingAspect"/>
-    <aop:aspectj-autoproxy proxy-target-class="true">
-        <aop:include name="loggingAspect"/>
-    </aop:aspectj-autoproxy>
-
     <!-- *****************************************************
    Set up JMX Management
    @See org.springframework.amqp.rabbit.core.RabbitAdmin
@@ -91,8 +85,11 @@
                                  level="DEBUG" log-full-message="true"/>
 
 
-    <int:gateway id="rabbitGateway" default-request-channel="requestChannel" default-reply-channel="responseChannel"
+    <int:gateway id="rabbitGateway" default-request-channel="requestChannel"
                  error-channel="errorChannel" service-interface="com.chariotsolutions.rabbitmq.rabbit.RabbitGateway"/>
+
+    <!--<int:gateway id="rabbitGateway" default-request-channel="requestChannel" default-reply-channel="responseChannel"-->
+                 <!--error-channel="errorChannel" service-interface="com.chariotsolutions.rabbitmq.rabbit.RabbitGateway"/>-->
 
 
     <!--&lt;!&ndash; *** Step 4 *** AMQP Gateway receives messages from Rabbit &ndash;&gt;-->

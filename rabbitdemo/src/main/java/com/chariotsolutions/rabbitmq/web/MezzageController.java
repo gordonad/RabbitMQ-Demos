@@ -6,6 +6,8 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,12 +26,13 @@ import com.chariotsolutions.rabbitmq.service.MezzageService;
 @RequestMapping("/mezzages")
 @Controller
 public class MezzageController {
+    private static final Logger logger = LoggerFactory.getLogger(MezzageController.class);
 
 	@Autowired
 	MezzageService mezzageService;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public java.lang.String create(@Valid Mezzage mezzage,
+	public String create(@Valid Mezzage mezzage,
 			BindingResult bindingResult, Model uiModel,
 			HttpServletRequest httpServletRequest) {
 		if (bindingResult.hasErrors()) {
@@ -44,13 +47,13 @@ public class MezzageController {
 	}
 
 	@RequestMapping(params = "form", method = RequestMethod.GET)
-	public java.lang.String createForm(Model uiModel) {
+	public String createForm(Model uiModel) {
 		uiModel.addAttribute("mezzage", new Mezzage());
 		return "mezzages/create";
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public java.lang.String show(@PathVariable("id") java.lang.Long id,
+	public String show(@PathVariable("id") Long id,
 			Model uiModel) {
 		uiModel.addAttribute("mezzage", mezzageService.findMezzage(id));
 		uiModel.addAttribute("itemId", id);
@@ -58,13 +61,13 @@ public class MezzageController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public java.lang.String list(
-			@RequestParam(value = "page", required = false) java.lang.Integer page,
-			@RequestParam(value = "size", required = false) java.lang.Integer size,
+	public String list(
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "size", required = false) Integer size,
 			Model uiModel) {
 		if (page != null || size != null) {
-			int sizeNo = size == null ? 10 : size.intValue();
-			final int firstResult = page == null ? 0 : (page.intValue() - 1)
+			int sizeNo = size == null ? 10 : size;
+			final int firstResult = page == null ? 0 : (page - 1)
 					* sizeNo;
 			uiModel.addAttribute("mezzages",
 					mezzageService.findMezzageEntries(firstResult, sizeNo));
@@ -81,7 +84,7 @@ public class MezzageController {
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public java.lang.String update(@Valid Mezzage mezzage,
+	public String update(@Valid Mezzage mezzage,
 			BindingResult bindingResult, Model uiModel,
 			HttpServletRequest httpServletRequest) {
 		if (bindingResult.hasErrors()) {
@@ -96,17 +99,17 @@ public class MezzageController {
 	}
 
 	@RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
-	public java.lang.String updateForm(@PathVariable("id") java.lang.Long id,
+	public String updateForm(@PathVariable("id") Long id,
 			Model uiModel) {
 		uiModel.addAttribute("mezzage", mezzageService.findMezzage(id));
 		return "mezzages/update";
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public java.lang.String delete(
-			@PathVariable("id") java.lang.Long id,
-			@RequestParam(value = "page", required = false) java.lang.Integer page,
-			@RequestParam(value = "size", required = false) java.lang.Integer size,
+	public String delete(
+			@PathVariable("id") Long id,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "size", required = false) Integer size,
 			Model uiModel) {
 		Mezzage mezzage = mezzageService.findMezzage(id);
 		mezzageService.deleteMezzage(mezzage);
@@ -121,7 +124,7 @@ public class MezzageController {
 		return mezzageService.findAllMezzages();
 	}
 
-	java.lang.String encodeUrlPathSegment(java.lang.String pathSegment,
+	String encodeUrlPathSegment(String pathSegment,
 			HttpServletRequest httpServletRequest) {
 		String enc = httpServletRequest.getCharacterEncoding();
 		if (enc == null) {
