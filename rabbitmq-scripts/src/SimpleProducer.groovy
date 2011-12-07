@@ -17,15 +17,20 @@ connectionFactory.setUri uri
 
 def connection = connectionFactory.newConnection()
 def channel = connection.createChannel()
+println "Channel '$channel' created"
 
 if (!exchange) {
+    println "No Exchange specified configuring [channel] -> [queue]"
     // Queue, Durable, Exclusive, AutoDelete, Arguments
-    println "Declaring Queue $queueName non-Durable, non-Exclusive, no-AutoDelete, no-Arguments"
-    channel.queueDeclare(queueName, false, false, false, null)
+    println "Declaring Queue '$queueName' non-Durable, non-Exclusive, no-AutoDelete, no-Arguments for Channel '$channel'"
+    def declareOk = channel.queueDeclare(queueName, false, false, false, null)
+    println "Declare Queue returned '$declareOk'"
 }
 
-println "Publishing Message $message on Exchange $exchange and Queue $queueName"
+println "Publishing '$message' on Exchange '$exchange' for Queue '$queueName' from channel '$channel'"
 channel.basicPublish exchange, queueName, null, message.getBytes()
+println "Publish does not return results"
+
 channel.close()
 connection.close()
 
