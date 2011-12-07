@@ -2,14 +2,11 @@ package com.chariotsolutions.rabbitmq.domain;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 
 @Entity
 public class Mezzage {
-    private static final Logger logger = LoggerFactory.getLogger(Mezzage.class);
 
     private String messageBody;
     private String routingKey;
