@@ -1,0 +1,6 @@
+<aspectj>
+<aspects>
+<aspect name="com.chariotsolutions.rabbitmq.aspects.LoggingAspect"/>
+</aspects>
+</aspectj>
+

@@ -1,8 +1,12 @@
 package com.chariotsolutions.rabbitmq.repository;
 
-import com.chariotsolutions.rabbitmq.domain.Mezzage;
-import org.springframework.roo.addon.layers.repository.jpa.RooJpaRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-@RooJpaRepository(domainType = Mezzage.class)
-public interface MezzageRepository {
+import com.chariotsolutions.rabbitmq.domain.Mezzage;
+
+@Repository
+public interface MezzageRepository extends JpaSpecificationExecutor<Mezzage>,
+		JpaRepository<Mezzage, Long> {
 }

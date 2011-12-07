@@ -13,3 +13,7 @@ web mvc setup
 web mvc all --package ~.web
 logging setup --level DEBUG 
 development mode 
+// Spring Roo 1.2.0.RC1 [rev dcaa483] log opened at 2011-12-01 17:59:06
+// Spring Roo 1.2.0.RC1 [rev dcaa483] log closed at 2011-12-01 18:08:59
+// Spring Roo 1.2.0.RC1 [rev dcaa483] log opened at 2011-12-01 18:09:32
+// Spring Roo 1.2.0.RC1 [rev dcaa483] log closed at 2011-12-01 18:36:57

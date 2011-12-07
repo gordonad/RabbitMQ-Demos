@@ -1,0 +1,128 @@
+Overview
+========
+
+This plugin provides the ability for your RabbitMQ server to perform
+authentication (determining who can log in) and authorisation
+(determining what permissions they have) by deferring to an external
+LDAP server. To use this plugin, some editing of the RabbitMQ
+configuration file is required. You must enable the plugin, and then
+configure it. You are advised to read this entire file before
+starting.
+
+Requirements
+============
+
+You can build and install it like any other plugin (see
+http://www.rabbitmq.com/plugin-development.html).
+
+Enabling the plugin
+===================
+
+To enable the plugin, set the value of the "auth_backends" configuration item
+for the "rabbit" application to include "rabbit_auth_backend_ldap".
+"auth_backends" is a list of authentication providers to try in order.
+
+Therefore a complete RabbitMQ configuration that enables this plugin would
+look like:
+
+[{rabbit, [{auth_backends, [rabbit_auth_backend_ldap]}]}].
+
+to use only LDAP, or:
+
+[{rabbit,
+  [{auth_backends, [rabbit_auth_backend_ldap, rabbit_auth_backend_internal]}]
+ }].
+
+to use LDAP and the internal database.
+
+Configuring the plugin
+======================
+
+You must then configure the plugin. This plugin has quite a few configuration
+options, but most have sensible defaults.
+
+The most complex part of configuring the plugin pertains to
+authorisation (i.e. granting permissions to your users via LDAP). This
+is documented separately in README-authorisation.
+
+The default configuration allows all users to access all objects in
+all vhosts, but does not make them administrators. If you're happy
+with that, there is no need to read README-authorisation.
+
+The options not directly related to authorisation are:
+
+servers
+-------
+
+Default: ["ldap"]
+
+List of LDAP servers to attempt to bind to, in order. You almost certainly
+want to change this.
+
+user_dn_pattern
+---------------
+
+Default: "cn=${username},ou=People,dc=example,dc=com"
+
+Pattern for a user's DN. Must contain exactly one instance of
+"${username}". This will be where the username supplied by the client
+is substituted. You almost certainly want to change this.
+
+other_bind
+----------
+
+Default: anon
+
+Normally for authentication this plugin binds to the LDAP server as
+the user it is trying to authenticate. This option controls how to
+bind for authorisation queries, and to retrieve the details of a user
+who is logging in without presenting a password (e.g. SASL EXTERNAL).
+
+This option must either be the atom anon, or a tuple {UserDN, Password}.
+
+use_ssl
+-------
+
+Default: false
+
+Whether to use LDAP over SSL. Uses the same SSL configuration as elsewhere in
+RabbitMQ.
+
+port
+----
+
+Default: 389
+
+Port on which to connect to the LDAP servers.
+
+log
+---
+
+Default: false
+
+Set to true to cause LDAP traffic to be written to the RabbitMQ
+log. You probably only want to use this for debugging, since it will
+usually cause passwords to be written to the logs.
+
+Example configuration file
+==========================
+
+A minimal configuration file with some options specified might look
+like:
+
+[
+  {rabbit, [{auth_backends, [rabbit_auth_backend_ldap]}]},
+  {rabbitmq_auth_backend_ldap,
+   [ {servers,               ["my-ldap-server"]},
+     {user_dn_pattern,       "cn=${username},ou=People,dc=example,dc=com"} ] }
+].
+
+Limitations
+===========
+
+Currently this plugin is rather chatty with LDAP connections when
+doing authorisation over LDAP.
+
+There might need to be more types of queries.
+
+It hasn't received much testing.
