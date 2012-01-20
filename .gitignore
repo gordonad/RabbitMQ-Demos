@@ -1,14 +1,15 @@
 .classpath
 .DS_Store
+*.dump
 .idea
 *.iml
 *.ipr
 *.iws
 *.log
+out
 .project
 .settings
 .springBeans
 surefire*
 *.swp
 target
-*.dump
