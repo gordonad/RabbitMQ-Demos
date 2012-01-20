@@ -9,10 +9,9 @@
           http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <int:message-history/>
-
     <rabbit:connection-factory id="rabbitConnectionFactory"
-                               username="${rabbit.username}" password="${rabbit.password}" host="${rabbit.host:5672}"
+                               username="${rabbit.username}" password="${rabbit.password}"
+                               host="${rabbit.host:5672}"
                                port="${rabbit.port}" channel-cache-size="${rabbit.channel.cache.size:1}"
                                virtual-host="${rabbit.virtual.host:/}"/>
 
@@ -24,77 +23,32 @@
     <rabbit:admin id="rabbitAdmin" connection-factory="rabbitConnectionFactory"
                   auto-startup="true"/>
 
-    <rabbit:queue id="rabbitRequestQueue" name="${rabbitdemo.requestQueue}"/>
-    <rabbit:queue id="rabbitResponseQueue" name="${rabbitdemo.responseQueue}"/>
-    <rabbit:queue id="rabbitErrorQueue" name="${rabbitdemo.errorQueue}"/>
+    <rabbit:queue id="rabbitRequestQueue" name="sales.alerts"/>
+    <!--<rabbit:queue id="rabbitResponseQueue" name="${rabbitdemo.responseQueue}"/>-->
+    <!--<rabbit:queue id="rabbitErrorQueue" name="${rabbitdemo.errorQueue}"/>-->
 
     <rabbit:direct-exchange name="${rabbitdemo.message.exchange}">
         <rabbit:bindings>
-            <rabbit:binding queue="${rabbitdemo.requestQueue}"
+            <rabbit:binding queue="sales.alerts"
                             key="${rabbitdemo.message.routing.key}"/>
         </rabbit:bindings>
     </rabbit:direct-exchange>
 
     <rabbit:template id="rabbitTemplate"
-                     queue="${rabbitdemo.requestQueue}" connection-factory="rabbitConnectionFactory"
-                     routing-key="${rabbitdemo.message.routing.key}" reply-timeout="1000"/>
+                     queue="${rabbitdemo.requestQueue}"
+                     connection-factory="rabbitConnectionFactory"
+                     routing-key="${rabbitdemo.message.routing.key}"
+                     reply-timeout="1000"
+                     channel-transacted="true"/>
 
-    <!-- *** STEP 1 *** Gateway receives msg from code -->
-
-    <!-- *** STEP 2 *** Gateway puts payload on "requestChannel" -->
-    <int:channel id="requestChannel">
-        <int:interceptors>
-            <int:wire-tap channel="msgLogger"/>
-        </int:interceptors>
-    </int:channel>
-
-    <!-- *** Response *** Returned expected on "responseChannel" -->
-    <int:channel id="responseChannel">
-        <int:queue/>
-        <int:interceptors>
-            <int:wire-tap channel="msgLogger"/>
-        </int:interceptors>
-    </int:channel>
-    <int:logging-channel-adapter id="msgLogger"
-                                 level="DEBUG" log-full-message="true"/>
-
-    <!-- *** Error Response *** Returned expected on "errorChannel" -->
-    <int:channel id="errorChannel">
-        <int:interceptors>
-            <int:wire-tap channel="errorLogger"/>
-        </int:interceptors>
-    </int:channel>
-
-    <!-- *** STEP 3 *** AMQP Gateway sends payload from "requestChannel" -->
-    <!-- Rabbit Gateways (instead of channel adapters) for Remote Messaging
- - gDickens 11-Aug-11 -->
-    <amqp:outbound-gateway id="amqpOutboundGateway"
-                           request-channel="requestChannel"
-                           reply-channel="responseChannel" amqp-template="rabbitTemplate"
-                           exchange-name="${rabbitdemo.message.exchange}"
-                           routing-key="${rabbitdemo.message.routing.key}"/>
-
-    <!-- *** Error Response *** AMQP Gateway processes messages from the "Error
-   Channel" -->
-    <amqp:inbound-gateway id="amqpErrorGateway" request-channel="errorLogger"
-                          connection-factory="rabbitConnectionFactory" queue-names="${rabbitdemo.errorQueue}"/>
-
-    <int:logging-channel-adapter id="errorLogger"
-                                 level="DEBUG" log-full-message="true"/>
+    <rabbit:listener-container
+            connection-factory="rabbitConnectionFactory" acknowledge="auto">
+        <rabbit:listener ref="simpleBean" queue-names="sales.alerts"
+                         method="printMessage"/>
+    </rabbit:listener-container>
 
 
-    <int:gateway id="rabbitGateway" default-request-channel="requestChannel"
-                 error-channel="errorChannel" service-interface="com.chariotsolutions.rabbitmq.rabbit.RabbitGateway"/>
-
-    <!--<int:gateway id="rabbitGateway" default-request-channel="requestChannel" default-reply-channel="responseChannel"-->
-                 <!--error-channel="errorChannel" service-interface="com.chariotsolutions.rabbitmq.rabbit.RabbitGateway"/>-->
-
-
-    <!--&lt;!&ndash; *** Step 4 *** AMQP Gateway receives messages from Rabbit &ndash;&gt;-->
-    <!--<amqp:inbound-gateway id="amqpInboundGateway"-->
-    <!--request-channel="requestChannel" reply-channel="responseChannel"-->
-    <!--connection-factory="rabbitConnectionFactory" queue-names="${rabbitdemo.requestQueue}"/>-->
-
-
+    <bean id="simpleBean"
+          class="com.chariotsolutions.rabbitmq.domain.SimpleStringBean" />
 </beans>
 

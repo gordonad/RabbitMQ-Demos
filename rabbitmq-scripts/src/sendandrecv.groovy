@@ -21,7 +21,7 @@ println """
 def connectionFactory = new ConnectionFactory()
 println "Create [ConnectionFactory]"
 connectionFactory.host = "localhost"
-//connectionFactory.port = 5672
+connectionFactory.port = 5672
 //connectionFactory.virtualHost = '/'
 //connectionFactory.username = 'guest'
 //connectionFactory.password = 'guest'
@@ -65,37 +65,37 @@ println "Publishing message '$messageBody' on Exchange '$exchange' RoutingKey '$
 channel.basicPublish exchange, "$routingKey", null, messageBody.bytes
 println "Publish does not return results"
 
-//Receiving a message:
-println "\n\n*** 5. RECEIVE\n"
-println "[Message] <-- [Queue] <-- [Channel]"
-println "Receiving message (synchronized get) from Queue '$queueName' and acknowledging receipt"
-def getResponse = channel.basicGet queueName, true
-def basicProperties = getResponse.props
-println "Properties '$basicProperties'"
-println "Message Properties \n\t[\n\t\tApp Id '${basicProperties.appId}'"
-println "\t\tClass Id '${basicProperties.classId}'"
-println "\t\tClass Name '${basicProperties.className}'"
-println "\t\tCluster Id '${basicProperties.clusterId}'"
-println "\t\tContent Encoding '${basicProperties.contentEncoding}'"
-println "\t\tContent Type '${basicProperties.contentType}'"
-println "\t\tCorrelation Id '${basicProperties.correlationId}'"
-println "\t\tDelivery Mode '${basicProperties.deliveryMode}'"
-println "\t\tExpiration '${basicProperties.expiration}'"
-println "\t\tHeaders '${basicProperties.headers}'"
-println "\t\tMessage Id '${basicProperties.messageId}'"
-println "\t\tPriority '${basicProperties.priority}'"
-println "\t\tReply To '${basicProperties.replyTo}'"
-println "\t\tTimestamp '${basicProperties.timestamp}'"
-println "\t\tType '${basicProperties.type}'"
-println "\t\tUser Id '${basicProperties.userId}'\n\t]"
-
-def envelope = getResponse.envelope
-println "Envelope '$envelope'"
-println "Message Envelope \n\t[\n\t\tDelivery Tag '${envelope.deliveryTag}'"
-println "\t\tis Redelivered? '${envelope.redeliver}'"
-println "\t\tExchange '${envelope.exchange}'"
-println "\t\tRouting Key '${envelope.routingKey}'\n\t]"
-println "Body '${new String(getResponse.body)}'"
+////Receiving a message:
+//println "\n\n*** 5. RECEIVE\n"
+//println "[Message] <-- [Queue] <-- [Channel]"
+//println "Receiving message (synchronized get) from Queue '$queueName' and acknowledging receipt"
+//def getResponse = channel.basicGet queueName, true
+//def basicProperties = getResponse.props
+//println "Properties '$basicProperties'"
+//println "Message Properties \n\t[\n\t\tApp Id '${basicProperties.appId}'"
+//println "\t\tClass Id '${basicProperties.classId}'"
+//println "\t\tClass Name '${basicProperties.className}'"
+//println "\t\tCluster Id '${basicProperties.clusterId}'"
+//println "\t\tContent Encoding '${basicProperties.contentEncoding}'"
+//println "\t\tContent Type '${basicProperties.contentType}'"
+//println "\t\tCorrelation Id '${basicProperties.correlationId}'"
+//println "\t\tDelivery Mode '${basicProperties.deliveryMode}'"
+//println "\t\tExpiration '${basicProperties.expiration}'"
+//println "\t\tHeaders '${basicProperties.headers}'"
+//println "\t\tMessage Id '${basicProperties.messageId}'"
+//println "\t\tPriority '${basicProperties.priority}'"
+//println "\t\tReply To '${basicProperties.replyTo}'"
+//println "\t\tTimestamp '${basicProperties.timestamp}'"
+//println "\t\tType '${basicProperties.type}'"
+//println "\t\tUser Id '${basicProperties.userId}'\n\t]"
+//
+//def envelope = getResponse.envelope
+//println "Envelope '$envelope'"
+//println "Message Envelope \n\t[\n\t\tDelivery Tag '${envelope.deliveryTag}'"
+//println "\t\tis Redelivered? '${envelope.redeliver}'"
+//println "\t\tExchange '${envelope.exchange}'"
+//println "\t\tRouting Key '${envelope.routingKey}'\n\t]"
+//println "Body '${new String(getResponse.body)}'"
 
 
 channel.close()

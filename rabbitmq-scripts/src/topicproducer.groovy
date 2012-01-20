@@ -25,6 +25,7 @@ println """
 def connectionFactory = new ConnectionFactory()
 println "Create [ConnectionFactory]"
 connectionFactory.host = "localhost"
+connectionFactory.port = 5672
 def connection = connectionFactory.newConnection()
 def channel = connection.createChannel()
 

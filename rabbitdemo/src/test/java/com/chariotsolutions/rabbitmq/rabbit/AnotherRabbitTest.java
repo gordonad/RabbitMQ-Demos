@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,16 +15,17 @@ import java.util.Arrays;
 
 import static org.junit.Assert.fail;
 
-@ContextConfiguration
+@ContextConfiguration("RabbitTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class RabbitTest {
+public class AnotherRabbitTest {
     private static final String NULL_VAL = "NULL - d'oh";
 
     private static final Logger logger = LoggerFactory
-            .getLogger(RabbitTest.class);
+            .getLogger(AnotherRabbitTest.class);
+
 
     @Autowired
-    RabbitGateway rabbitGateway;
+    RabbitTemplate rabbitTemplate;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -54,7 +56,8 @@ public class RabbitTest {
             String sendMsg = "Hello Wabbit";
             logger.debug("Sending message through Gateway {}", sendMsg);
 //            String recvMsg = rabbitGateway.send(sendMsg);
-            rabbitGateway.send(sendMsg);
+            rabbitTemplate.convertAndSend("rabbitdemo.default.key",
+                    "This is my test");
 
 //            Object recvMsg = amqpTemplate
 //                    .receiveAndConvert("rabbitdemo.request.queue");
